@@ -1,0 +1,18 @@
+[package]
+name = "iw-extract"
+version = "0.1.0"
+edition = "2021"
+authors = ["Michael Bohn <spaceodyssey@gmx.de>"]
+description = "Wolfenstein game asset extractor"
+
+[features]
+sdl = [] # TODO should not be required if iw can be used purely as a lib
+
+[[bin]]
+name = "iwe"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4.5.1", features = ["derive"] }
+iw = { path="../iron-wolf/", features = ["sdl"]} # TODO lib should be possible to use without any feature
+#clap_derive = "4.5.0"
