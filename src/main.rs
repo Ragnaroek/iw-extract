@@ -1,8 +1,7 @@
 use std::io::Write;
 
 use clap::Parser;
-use iw::assets;
-use iw::assets::load_all_graphics;
+use iw::assets::{SOD, load_all_graphics};
 use iw::loader::DiskLoader;
 
 #[derive(Parser, Debug)]
@@ -17,22 +16,26 @@ struct Cli {
 fn main() -> Result<(), String> {
     let cli = Cli::parse();
 
+    let variant = &SOD;
+
     let loader = DiskLoader {
+        variant, // TODO: derive this from the files given?
         data_path: cli.files.unwrap_or("./".to_string()).into(),
+        patch_path: None,
     };
 
-    // TODO: derive this from the files given?
-    let variant = &assets::SOD;
-
-    let (graphic, font, tiles) = load_all_graphics(&loader, variant)?;
+    let (graphic, _font, _tiles, _texts) = load_all_graphics(&loader, &None)?;
 
     if let Some(pic_num) = cli.pic {
         let pic_ix = pic_num - variant.start_pics;
         if pic_ix < graphic.len() {
             std::io::stdout().write(&graphic[pic_ix].data).unwrap();
-            std::io::stdout().flush().unwrap(); 
+            std::io::stdout().flush().unwrap();
         } else {
-            println!("ERROR: pic {} does not exist, only {} in this file", pic_ix, variant.num_pics);
+            println!(
+                "ERROR: pic {} does not exist, only {} in this file",
+                pic_ix, variant.num_pics
+            );
         }
     }
 
